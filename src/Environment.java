@@ -27,46 +27,20 @@ class Obstacle {
         area1.intersect(area2);
         return !area1.isEmpty();
     }
-
-    // 获取最高点
-    public Point getHighestPoint() {
-        int highestY = Integer.MIN_VALUE;
-        int highestX = 0;
-
-        for (int i = 0; i < polygon.npoints; i++) {
-            if (polygon.ypoints[i] > highestY) {
-                highestY = polygon.ypoints[i];
-                highestX = polygon.xpoints[i];
-            }
-        }
-        return new Point(highestX, highestY);
-    }
-
-    // 获取最低点
-    public Point getLowestPoint() {
-        int lowestY = Integer.MAX_VALUE;
-        int lowestX = 0;
-
-        for (int i = 0; i < polygon.npoints; i++) {
-            if (polygon.ypoints[i] < lowestY) {
-                lowestY = polygon.ypoints[i];
-                lowestX = polygon.xpoints[i];
-            }
-        }
-        return new Point(lowestX, lowestY);
-    }
 }
 
 public class Environment extends JPanel {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 200;
-    private static final int NUM_OBSTACLES = 25; // 增加障碍物数量
+    private static final int NUM_OBSTACLES = 20;
     private List<Obstacle> obstacles;
-    private Random random;
+    private Random random; // 添加 Random 对象的声明
+    private Traveler traveler;
 
-    public Environment() {
+    public Environment(Traveler traveler) {
         this.obstacles = new ArrayList<>();
-        this.random = new Random();
+        this.random = new Random(); // 初始化 Random 对象
+        this.traveler = traveler;
         generateObstacles();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
     }
@@ -90,17 +64,17 @@ public class Environment extends JPanel {
     }
 
     private Polygon createRandomPolygon() {
-        int shapeType = random.nextInt(4); // 增加多种形状类型
+        int shapeType = random.nextInt(4);
 
         switch (shapeType) {
-            case 0: // Rectangle
+            case 0:
                 return createRectangle();
-            case 1: // Triangle
+            case 1:
                 return createTriangle();
-            case 2: // Hexagon
+            case 2:
                 return createHexagon();
-            case 3: // Pentagon
-                return createPentagon(); // 新增五边形
+            case 3:
+                return createPentagon();
             default:
                 return null;
         }
@@ -142,24 +116,14 @@ public class Environment extends JPanel {
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // 绘制所有障碍物并输出其最高点和最低点
         for (Obstacle obstacle : obstacles) {
             obstacle.draw(g);
-            Point highestPoint = obstacle.getHighestPoint();
-            Point lowestPoint = obstacle.getLowestPoint();
-
-            // 输出最高点和最低点
-            System.out.println("Obstacle Highest Point: " + highestPoint);
-            System.out.println("Obstacle Lowest Point: " + lowestPoint);
         }
+
+        traveler.draw(g); // 绘制 Traveler
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Maze-like Environment");
-        Environment environment = new Environment();
-        frame.add(environment);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+    public List<Obstacle> getObstacles() {
+        return obstacles;
     }
 }

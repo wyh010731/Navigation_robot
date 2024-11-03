@@ -32,16 +32,21 @@ class Obstacle {
 public class Environment extends JPanel {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 200;
-    private static final int NUM_OBSTACLES = 20;
+    private static final int NUM_OBSTACLES = 25;
     private List<Obstacle> obstacles;
-    private Random random; // 添加 Random 对象的声明
+    private Random random;
     private Traveler traveler;
+    private int goalX; // 终点的 x 坐标
+    private int goalY; // 终点的 y 坐标
+    private int goalRadius; // 终点的半径
 
     public Environment(Traveler traveler) {
         this.obstacles = new ArrayList<>();
-        this.random = new Random(); // 初始化 Random 对象
+        this.random = new Random();
         this.traveler = traveler;
+        this.goalRadius = 10; // 设置终点的半径
         generateObstacles();
+        generateGoal();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
     }
 
@@ -61,6 +66,24 @@ public class Environment extends JPanel {
                 obstacles.add(newObstacle);
             }
         }
+    }
+
+    private void generateGoal() {
+        boolean overlaps;
+        do {
+            goalX = WIDTH - 30; // 设置终点的 x 坐标
+            goalY = random.nextInt(HEIGHT - 30) + 15; // 随机设置终点的 y 坐标
+            overlaps = false;
+
+            // 检查终点是否与障碍物重叠
+            Rectangle goalBounds = new Rectangle(goalX - goalRadius, goalY - goalRadius, goalRadius * 2, goalRadius * 2);
+            for (Obstacle obstacle : obstacles) {
+                if (goalBounds.intersects(obstacle.getPolygon().getBounds())) {
+                    overlaps = true;
+                    break;
+                }
+            }
+        } while (overlaps); // 如果重叠，则重新生成
     }
 
     private Polygon createRandomPolygon() {
@@ -121,6 +144,10 @@ public class Environment extends JPanel {
         }
 
         traveler.draw(g); // 绘制 Traveler
+
+        // 绘制绿色圆形终点
+        g.setColor(Color.GREEN);
+        g.fillOval(goalX - goalRadius, goalY - goalRadius, goalRadius * 2, goalRadius * 2);
     }
 
     public List<Obstacle> getObstacles() {

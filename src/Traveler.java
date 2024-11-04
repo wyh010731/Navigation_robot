@@ -27,4 +27,19 @@ public class Traveler {
         this.x = x;
         this.y = y;
     }
+
+    // 新增的方法
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    // 新增的方法
+    public void move(int dx, int dy) {
+        this.x += dx;
+        this.y += dy;
+    }
 }

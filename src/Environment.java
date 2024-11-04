@@ -4,6 +4,7 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.awt.Point;
 
 class Obstacle {
     private Polygon polygon;
@@ -32,19 +33,26 @@ class Obstacle {
 public class Environment extends JPanel {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 200;
-    private static final int NUM_OBSTACLES = 25;
+    private static final int NUM_OBSTACLES = 15;
     private List<Obstacle> obstacles;
     private Random random;
     private Traveler traveler;
     private int goalX; // 终点的 x 坐标
     private int goalY; // 终点的 y 坐标
     private int goalRadius; // 终点的半径
+    private AStar aStar;
+    private List<Point> path;
+    private int currentPathIndex;
 
     public Environment(Traveler traveler) {
         this.obstacles = new ArrayList<>();
         this.random = new Random();
         this.traveler = traveler;
         this.goalRadius = 10; // 设置终点的半径
+        this.aStar = new AStar();
+        this.path = new ArrayList<>();
+        this.currentPathIndex = 0;
+
         generateObstacles();
         generateGoal();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -133,6 +141,19 @@ public class Environment extends JPanel {
                 new int[]{y, y + 20, y + 40, y + 30, y + 20}, 5);
     }
 
+    public void calculatePath(Point goal) {
+        path = aStar.findPath(new Point(traveler.getX(), traveler.getY()), goal, obstacles, WIDTH);
+        currentPathIndex = 0;
+    }
+
+    public int getGoalX() {
+        return goalX;
+    }
+
+    public int getGoalY() {
+        return goalY;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -141,6 +162,13 @@ public class Environment extends JPanel {
 
         for (Obstacle obstacle : obstacles) {
             obstacle.draw(g);
+        }
+
+        // 移动 Traveler 沿着计算出的路径
+        if (currentPathIndex < path.size()) {
+            Point nextPoint = path.get(currentPathIndex);
+            traveler.setPosition(nextPoint.x, nextPoint.y);
+            currentPathIndex++;
         }
 
         traveler.draw(g); // 绘制 Traveler

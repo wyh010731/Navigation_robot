@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.awt.Point;
 
+// Obstacle类定义
 class Obstacle {
     private Polygon polygon;
 
@@ -30,6 +31,7 @@ class Obstacle {
     }
 }
 
+// Environment类定义
 public class Environment extends JPanel {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 200;
@@ -43,6 +45,8 @@ public class Environment extends JPanel {
     private AStar aStar;
     private List<Point> path;
     private int currentPathIndex;
+
+    private Timer autoMoveTimer; // 定时器
 
     public Environment(Traveler traveler) {
         this.obstacles = new ArrayList<>();
@@ -144,6 +148,11 @@ public class Environment extends JPanel {
     public void calculatePath(Point goal) {
         path = aStar.findPath(new Point(traveler.getX(), traveler.getY()), goal, obstacles, WIDTH);
         currentPathIndex = 0;
+
+        // 如果路径存在，启动定时器自动移动旅行者
+        if (path != null && !path.isEmpty()) {
+            startAutoMove();
+        }
     }
 
     public int getGoalX() {
@@ -154,6 +163,24 @@ public class Environment extends JPanel {
         return goalY;
     }
 
+    private void startAutoMove() {
+        if (autoMoveTimer != null && autoMoveTimer.isRunning()) {
+            autoMoveTimer.stop();
+        }
+
+        autoMoveTimer = new Timer(100, e -> {
+            if (currentPathIndex < path.size()) {
+                Point nextPoint = path.get(currentPathIndex);
+                traveler.setPosition(nextPoint.x, nextPoint.y);
+                currentPathIndex++;
+                repaint(); // 重绘窗口以更新显示
+            } else {
+                autoMoveTimer.stop(); // 到达终点后停止自动移动
+            }
+        });
+        autoMoveTimer.start();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -162,13 +189,6 @@ public class Environment extends JPanel {
 
         for (Obstacle obstacle : obstacles) {
             obstacle.draw(g);
-        }
-
-        // 移动 Traveler 沿着计算出的路径
-        if (currentPathIndex < path.size()) {
-            Point nextPoint = path.get(currentPathIndex);
-            traveler.setPosition(nextPoint.x, nextPoint.y);
-            currentPathIndex++;
         }
 
         traveler.draw(g); // 绘制 Traveler

@@ -20,7 +20,7 @@ public class Traveler {
         g.fillOval(x - radius, y - radius, radius * 2, radius * 2);
 
         // 绘制运动路径
-        g.setColor(Color.BLACK);
+        g.setColor(Color.red);
         for (int i = 0; i < path.size() - 1; i++) {
             Point p1 = path.get(i);
             Point p2 = path.get(i + 1);

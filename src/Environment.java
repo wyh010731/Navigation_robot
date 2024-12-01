@@ -33,7 +33,7 @@ class Obstacle {
 public class Environment extends JPanel {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 200;
-    private static final int NUM_OBSTACLES = 15;
+    private static final int NUM_OBSTACLES = 25;
     private List<Obstacle> obstacles;
     private Random random;
     private Traveler traveler;

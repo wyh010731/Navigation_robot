@@ -1,0 +1,8 @@
+@startuml
+package "Maze System" {
+  [User Interface] --> [Environment]
+  [Environment] --> [Traveler]
+  [Environment] --> [AStar]
+  [Environment] --> [Obstacle]
+}
+@enduml

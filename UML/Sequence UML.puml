@@ -1,0 +1,13 @@
+@startuml
+actor User
+entity Environment
+entity Traveler
+entity AStar
+
+User -> Environment : keyPressed(KeyEvent)
+Environment -> Traveler : move(dx, dy)
+Environment -> AStar : calculatePath(goal)
+AStar -> Environment : return path
+Environment -> Traveler : move according to path
+Environment -> Traveler : update position
+@enduml

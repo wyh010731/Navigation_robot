@@ -1,0 +1,71 @@
+@startuml
+
+class Main {
+    +main(args: String[]): void
+}
+
+class Traveler {
+    -x: int
+    -y: int
+    -radius: int
+    -path: ArrayList<Point>
+    +Traveler(x: int, y: int, radius: int)
+    +draw(g: Graphics): void
+    +getBounds(): Rectangle
+    +overlaps(obstacle: Obstacle): boolean
+    +setPosition(x: int, y: int): void
+    +move(dx: int, dy: int): void
+    +getX(): int
+    +getY(): int
+    +getPath(): ArrayList<Point>
+}
+
+class Environment {
+    -WIDTH: int
+    -HEIGHT: int
+    -NUM_OBSTACLES: int
+    -obstacles: List<Obstacle>
+    -random: Random
+    -traveler: Traveler
+    -goalX: int
+    -goalY: int
+    -goalRadius: int
+    -aStar: AStar
+    -path: List<Point>
+    -currentPathIndex: int
+    -autoMoveTimer: Timer
+    +Environment(traveler: Traveler)
+    +generateObstacles(): void
+    +generateGoal(): void
+    +calculatePath(goal: Point): void
+    +startAutoMove(): void
+    +paintComponent(g: Graphics): void
+    +getGoalX(): int
+    +getGoalY(): int
+    +getObstacles(): List<Obstacle>
+}
+
+class Obstacle {
+    -polygon: Polygon
+    +Obstacle(polygon: Polygon)
+    +getPolygon(): Polygon
+    +draw(g: Graphics): void
+    +intersects(other: Obstacle): boolean
+}
+
+class AStar {
+    -Node: class
+    +findPath(start: Point, goal: Point, obstacles: List<Obstacle>, gridSize: int): List<Point>
+    -heuristic(a: Point, b: Point): double
+    -reconstructPath(current: Node): List<Point>
+    -getNeighbors(point: Point, gridSize: int): List<Point>
+    -isObstacle(point: Point, obstacles: List<Obstacle>): boolean
+}
+
+Main -> Environment : initializes >
+Environment -> Traveler : contains >
+Environment -> Obstacle : contains >
+Environment -> AStar : uses >
+Traveler --> Obstacle : interacts with >
+
+@enduml

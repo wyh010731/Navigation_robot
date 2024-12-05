@@ -1,0 +1,5 @@
+@startuml
+[*] --> Idle
+Idle --> Moving : move(dx, dy)
+Moving --> Idle : stop
+@enduml
